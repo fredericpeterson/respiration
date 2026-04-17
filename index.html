@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon PEA — Tableau de Bord</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --accent: #7c5cfc;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --text: #f0f0f8;
+    --text2: #8888aa;
+    --dcam: #7c5cfc;
+    --pems: #00d4aa;
+    --positive: #00d4aa;
+    --negative: #ff6b6b;
+    --neutral: #f0c060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(ellipse at 20% 10%, rgba(124,92,252,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.08) 0%, transparent 50%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 24px 0 20px;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    margin: 16px auto 0;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+  }
+
+  /* COURS INPUT */
+  .cours-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .etf-input-block {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .etf-input-block:focus-within {
+    border-color: var(--accent);
+  }
+
+  .etf-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  .etf-name.dcam { color: var(--dcam); }
+  .etf-name.pems { color: var(--pems); }
+
+  .etf-isin {
+    font-size: 9px;
+    color: var(--text2);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .etf-input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-field {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: var(--accent);
+  }
+
+  .input-label {
+    font-size: 9px;
+    color: var(--text2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  /* BOUTON CALCUL */
+  .btn-calc {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #5a3fd4);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: opacity 0.2s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-calc:active { transform: scale(0.98); }
+  .btn-calc:hover { opacity: 0.9; }
+
+  /* TOTAL */
+  .total-card {
+    background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(0,212,170,0.1));
+    border: 1px solid rgba(124,92,252,0.3);
+  }
+
+  .total-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 4px 0;
+  }
+
+  .pv-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+
+  .pv-positive { background: rgba(0,212,170,0.15); color: var(--positive); border: 1px solid rgba(0,212,170,0.3); }
+  .pv-negative { background: rgba(255,107,107,0.15); color: var(--negative); border: 1px solid rgba(255,107,107,0.3); }
+  .pv-neutral { background: rgba(240,192,96,0.15); color: var(--neutral); border: 1px solid rgba(240,192,96,0.3); }
+
+  /* LIGNE ETF */
+  .etf-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .etf-line:last-child { border-bottom: none; }
+
+  .etf-line-left { display: flex; flex-direction: column; gap: 3px; }
+  .etf-line-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .etf-line-parts { font-size: 11px; color: var(--text2); }
+  .etf-line-right { text-align: right; }
+  .etf-line-value { font-size: 15px; font-weight: 500; }
+  .etf-line-pct { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* RÉPARTITION */
+  .repartition-bar {
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: var(--surface2);
+    margin: 10px 0;
+    display: flex;
+  }
+
+  .bar-dcam {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dcam), #5a3fd4);
+    border-radius: 5px 0 0 5px;
+    transition: width 0.6s ease;
+  }
+
+  .bar-pems {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pems), #00a884);
+    border-radius: 0 5px 5px 0;
+    transition: width 0.6s ease;
+  }
+
+  .repartition-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+  }
+
+  .label-dcam { color: var(--dcam); }
+  .label-pems { color: var(--pems); }
+
+  /* CONSEILS */
+  .conseil-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .conseil-item:last-child { border-bottom: none; }
+
+  .conseil-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .conseil-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .conseil-text strong {
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  /* DCA NEXT */
+  .dca-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .dca-block {
+    background: var(--surface2);
+    border-radius: 9px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .dca-etf { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .dca-parts { font-size: 20px; font-weight: 500; }
+  .dca-montant { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+  /* STAT ROW */
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-key { color: var(--text2); }
+  .stat-val { font-weight: 500; }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text2);
+    margin-top: 20px;
+    padding: 0 10px;
+    line-height: 1.6;
+    opacity: 0.6;
+  }
+
+  /* ANIMATION */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate { animation: fadeIn 0.4s ease forwards; }
+  .hidden { display: none; }
+
+  #results { opacity: 0; transition: opacity 0.4s; }
+  #results.visible { opacity: 1; }
+
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--positive);
+    margin-right: 5px;
+    animation: pulse 2s infinite;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Mon PEA</h1>
+  <div class="subtitle">Tableau de Bord · Fortuneo</div>
+</header>
+
+<!-- SAISIE COURS -->
+<div class="card">
+  <div class="card-label">📊 Entrer les cours actuels</div>
+  <div class="cours-grid">
+    <div class="etf-input-block">
+      <div class="etf-name dcam">DCAM</div>
+      <div class="etf-isin">FR001400U5Q4</div>
+      <div class="etf-input-row">
+        <div>
+          <div class="input-label">Cours (€)</div>
+          <input type="number" id="cours-dcam" class="input-field" placeholder="5.595" step="0.001" value="5.595">
+        </div>
+        <div>
+          <div class="input-label">Nb parts</div>
+          <input type="number" id="parts-dcam" class="input-field" placeholder="999" value="999">
+        </div>
+      </div>
+    </div>
+    <div class="etf-input-block">
+      <div class="etf-name pems">PEMS</div>
+      <div class="etf-isin">FR001400ZGO4</div>
+      <div class="etf-input-row">
+        <div>
+          <div class="input-label">Cours (€)</div>
+          <input type="number" id="cours-pems" class="input-field" placeholder="6.712" step="0.001" value="6.712">
+        </div>
+        <div>
+          <div class="input-label">Nb parts</div>
+          <input type="number" id="parts-pems" class="input-field" placeholder="153" value="153">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 12px;">
+    <div class="input-label">Montant total investi (€)</div>
+    <input type="number" id="investi" class="input-field" placeholder="6400" value="6400">
+  </div>
+
+  <div style="margin-top: 12px;">
+    <div class="input-label">Versement mensuel DCA (€)</div>
+    <input type="number" id="dca-mensuel" class="input-field" placeholder="150" value="150">
+  </div>
+</div>
+
+<button class="btn-calc" onclick="calculer()">⚡ Calculer mon portefeuille</button>
+
+<!-- RÉSULTATS -->
+<div id="results">
+
+  <!-- TOTAL -->
+  <div class="card total-card">
+    <div class="card-label"><span class="live-dot"></span>Valeur du portefeuille</div>
+    <div class="total-value" id="total-val">—</div>
+    <div id="pv-badge"></div>
+  </div>
+
+  <!-- ETF BREAKDOWN -->
+  <div class="card">
+    <div class="card-label">📦 Détail par ETF</div>
+    <div class="etf-line">
+      <div class="etf-line-left">
+        <div class="etf-line-name" style="color: var(--dcam)">DCAM</div>
+        <div class="etf-line-parts" id="dcam-parts-detail">— parts</div>
+      </div>
+      <div class="etf-line-right">
+        <div class="etf-line-value" id="dcam-val">—</div>
+        <div class="etf-line-pct" id="dcam-pct">—</div>
+      </div>
+    </div>
+    <div class="etf-line">
+      <div class="etf-line-left">
+        <div class="etf-line-name" style="color: var(--pems)">PEMS</div>
+        <div class="etf-line-parts" id="pems-parts-detail">— parts</div>
+      </div>
+      <div class="etf-line-right">
+        <div class="etf-line-value" id="pems-val">—</div>
+        <div class="etf-line-pct" id="pems-pct">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RÉPARTITION -->
+  <div class="card">
+    <div class="card-label">🎯 Répartition actuelle</div>
+    <div class="repartition-bar">
+      <div class="bar-dcam" id="bar-dcam" style="width: 85%"></div>
+      <div class="bar-pems" id="bar-pems" style="width: 15%"></div>
+    </div>
+    <div class="repartition-labels">
+      <span class="label-dcam" id="label-dcam">DCAM — %</span>
+      <span class="label-pems" id="label-pems">PEMS — %</span>
+    </div>
+    <div id="repartition-conseil" style="margin-top: 10px; font-size: 11px;"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="card">
+    <div class="card-label">📈 Statistiques</div>
+    <div class="stat-row">
+      <span class="stat-key">Prix moyen DCAM</span>
+      <span class="stat-val" id="pm-dcam">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">Objectif cible</span>
+      <span class="stat-val">85% DCAM / 15% PEMS</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">Enveloppe PEA utilisée</span>
+      <span class="stat-val" id="pea-utilise">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">Plafond PEA restant</span>
+      <span class="stat-val" id="pea-restant">—</span>
+    </div>
+  </div>
+
+  <!-- PROCHAIN DCA -->
+  <div class="card">
+    <div class="card-label">📅 Prochain DCA mensuel</div>
+    <div class="dca-grid">
+      <div class="dca-block">
+        <div class="dca-etf" style="color: var(--dcam)">DCAM</div>
+        <div class="dca-parts" id="dca-dcam-parts">—</div>
+        <div class="dca-montant" id="dca-dcam-montant">parts (~—€)</div>
+      </div>
+      <div class="dca-block">
+        <div class="dca-etf" style="color: var(--pems)">PEMS</div>
+        <div class="dca-parts" id="dca-pems-parts">—</div>
+        <div class="dca-montant" id="dca-pems-montant">parts (~—€)</div>
+      </div>
+    </div>
+    <div style="margin-top: 10px; font-size: 11px; color: var(--text2); text-align: center;" id="dca-cash-restant"></div>
+  </div>
+
+  <!-- CONSEILS -->
+  <div class="card">
+    <div class="card-label">💡 Conseils personnalisés</div>
+    <div id="conseils-container"></div>
+  </div>
+
+</div>
+
+<div class="disclaimer">
+  ⚠️ Ces informations sont données à titre indicatif uniquement.<br>
+  Elles ne constituent pas un conseil en investissement.<br>
+  Les performances passées ne préjugent pas des performances futures.
+</div>
+
+<script>
+function fmt(n) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+function calculer() {
+  const coursDCAM = parseFloat(document.getElementById('cours-dcam').value) || 5.595;
+  const coursesPEMS = parseFloat(document.getElementById('cours-pems').value) || 6.712;
+  const partsDCAM = parseInt(document.getElementById('parts-dcam').value) || 999;
+  const partsPEMS = parseInt(document.getElementById('parts-pems').value) || 153;
+  const investi = parseFloat(document.getElementById('investi').value) || 6400;
+  const dcaMensuel = parseFloat(document.getElementById('dca-mensuel').value) || 150;
+
+  const valDCAM = coursDCAM * partsDCAM;
+  const valPEMS = coursesPEMS * partsPEMS;
+  const total = valDCAM + valPEMS;
+  const pv = total - investi;
+  const pvPct = (pv / investi) * 100;
+
+  const pctDCAM = (valDCAM / total) * 100;
+  const pctPEMS = (valPEMS / total) * 100;
+
+  // Total
+  document.getElementById('total-val').textContent = fmt(total);
+
+  // PV Badge
+  const badge = document.getElementById('pv-badge');
+  const sign = pv >= 0 ? '+' : '';
+  const cls = Math.abs(pvPct) < 0.5 ? 'pv-neutral' : pv >= 0 ? 'pv-positive' : 'pv-negative';
+  const emoji = pv >= 0 ? '📈' : '📉';
+  badge.innerHTML = `<div class="pv-badge ${cls}">${emoji} ${sign}${fmt(pv)} (${sign}${pvPct.toFixed(2)}%)</div>`;
+
+  // ETF details
+  document.getElementById('dcam-parts-detail').textContent = `${partsDCAM} parts × ${coursDCAM.toFixed(3)}€`;
+  document.getElementById('pems-parts-detail').textContent = `${partsPEMS} parts × ${coursesPEMS.toFixed(3)}€`;
+  document.getElementById('dcam-val').textContent = fmt(valDCAM);
+  document.getElementById('pems-val').textContent = fmt(valPEMS);
+  document.getElementById('dcam-pct').textContent = `${pctDCAM.toFixed(1)}% du portfolio`;
+  document.getElementById('pems-pct').textContent = `${pctPEMS.toFixed(1)}% du portfolio`;
+
+  // Répartition bar
+  document.getElementById('bar-dcam').style.width = pctDCAM.toFixed(1) + '%';
+  document.getElementById('bar-pems').style.width = pctPEMS.toFixed(1) + '%';
+  document.getElementById('label-dcam').textContent = `DCAM — ${pctDCAM.toFixed(1)}%`;
+  document.getElementById('label-pems').textContent = `PEMS — ${pctPEMS.toFixed(1)}%`;
+
+  // Conseil répartition
+  const repDiv = document.getElementById('repartition-conseil');
+  const ecartDCAM = pctDCAM - 85;
+  if (Math.abs(ecartDCAM) <= 2) {
+    repDiv.innerHTML = `<span style="color: var(--positive)">✅ Répartition parfaite — tu es à l'objectif 85/15</span>`;
+  } else if (pctDCAM > 87) {
+    repDiv.innerHTML = `<span style="color: var(--neutral)">⚠️ Trop de DCAM (+${ecartDCAM.toFixed(1)}%) — achète du PEMS en priorité</span>`;
+  } else {
+    repDiv.innerHTML = `<span style="color: var(--neutral)">⚠️ Trop de PEMS — achète du DCAM en priorité</span>`;
+  }
+
+  // Stats
+  const pmDCAM = investi * 0.85 / partsDCAM;
+  document.getElementById('pm-dcam').textContent = pmDCAM.toFixed(3) + ' €';
+  const peaUtilise = investi;
+  document.getElementById('pea-utilise').textContent = fmt(peaUtilise) + ` (${((peaUtilise/150000)*100).toFixed(1)}%)`;
+  document.getElementById('pea-restant').textContent = fmt(150000 - peaUtilise);
+
+  // DCA calcul
+  const montantDCAM = dcaMensuel * 0.85;
+  const montantPEMS = dcaMensuel * 0.15;
+  const nbDCAM = Math.floor(montantDCAM / coursDCAM);
+  const nbPEMS = Math.floor(montantPEMS / coursesPEMS);
+  const depenseDCAM = nbDCAM * coursDCAM;
+  const depensePEMS = nbPEMS * coursesPEMS;
+  const cashRestant = dcaMensuel - depenseDCAM - depensePEMS;
+
+  document.getElementById('dca-dcam-parts').textContent = nbDCAM;
+  document.getElementById('dca-pems-parts').textContent = nbPEMS;
+  document.getElementById('dca-dcam-montant').textContent = `parts (~${depenseDCAM.toFixed(0)}€)`;
+  document.getElementById('dca-pems-montant').textContent = `parts (~${depensePEMS.toFixed(0)}€)`;
+  document.getElementById('dca-cash-restant').textContent = `Cash résiduel : ~${cashRestant.toFixed(2)}€ reste en compte espèces`;
+
+  // Conseils dynamiques
+  const conseils = [];
+
+  if (pv < -200) {
+    conseils.push({ icon: '💪', text: '<strong>Ne panique pas</strong> — une baisse latente est normale. Le marché se remet toujours. Continue ton DCA mensuel sans hésiter.' });
+  } else if (pv >= 0) {
+    conseils.push({ icon: '🎉', text: `Tu es en <strong>plus-value de ${fmt(pv)}</strong> — le travail paie ! Continue ton DCA régulièrement.` });
+  }
+
+  if (Math.abs(ecartDCAM) > 3) {
+    if (pctDCAM > 87) {
+      conseils.push({ icon: '⚖️', text: `Ta répartition est à <strong>${pctDCAM.toFixed(1)}% DCAM</strong>. Lors de ton prochain DCA, achète uniquement du PEMS pour rééquilibrer.` });
+    } else {
+      conseils.push({ icon: '⚖️', text: `Ta répartition est à <strong>${pctPEMS.toFixed(1)}% PEMS</strong>. Lors de ton prochain DCA, achète uniquement du DCAM.` });
+    }
+  }
+
+  conseils.push({ icon: '📅', text: `Ton prochain DCA est le <strong>5 du mois</strong> — programme un virement de <strong>${fmt(dcaMensuel)}</strong> sur ton PEA Fortuneo.` });
+
+  conseils.push({ icon: '🔄', text: `Rééquilibre ton portefeuille <strong>une fois par an maximum</strong>. Pas besoin d'intervenir plus souvent.` });
+
+  if (total > 5000) {
+    conseils.push({ icon: '⏳', text: `Tu as versé ${fmt(investi)} sur ton PEA. Rappelle-toi : <strong>ne retire pas avant 5 ans</strong> pour bénéficier de la fiscalité avantageuse (17,2% seulement).` });
+  }
+
+  const container = document.getElementById('conseils-container');
+  container.innerHTML = conseils.map(c => `
+    <div class="conseil-item">
+      <div class="conseil-icon">${c.icon}</div>
+      <div class="conseil-text">${c.text}</div>
+    </div>
+  `).join('');
+
+  // Show results
+  const results = document.getElementById('results');
+  results.classList.add('visible');
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Auto-calcul au chargement
+window.addEventListener('load', () => {
+  setTimeout(calculer, 300);
+});
+</script>
+
+</body>
+</html>
