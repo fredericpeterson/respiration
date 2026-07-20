@@ -2,655 +2,710 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon PEA — Tableau de Bord</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Souffle — Guide de respiration</title>
+<meta name="description" content="Guide de respiration guidée : 4-7-8, cohérence cardiaque et respiration carrée.">
+<meta name="theme-color" content="#141a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Souffle">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: #2a2a3a;
-    --accent: #7c5cfc;
-    --accent2: #00d4aa;
-    --accent3: #ff6b6b;
-    --text: #f0f0f8;
-    --text2: #8888aa;
-    --dcam: #7c5cfc;
-    --pems: #00d4aa;
-    --positive: #00d4aa;
-    --negative: #ff6b6b;
-    --neutral: #f0c060;
+  :root{
+    --bg-1:#141a2e;
+    --bg-2:#231a30;
+    --ink:#e8eaf2;
+    --ink-dim:#8991ab;
+    --gold:#e3b877;
+    --sage:#93b6a1;
+    --line:rgba(232,234,242,0.09);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, #2a2340 0%, transparent 55%),
+      linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 20px 44px;
+    overflow-x:hidden;
+    position:relative;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  .topbar{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .titleblock{ text-align:left; }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:26px;
+    letter-spacing:0.01em;
+    color:var(--ink);
+  }
+  h1 em{ font-style:italic; color:var(--gold); }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    padding: 20px;
-    background-image: 
-      radial-gradient(ellipse at 20% 10%, rgba(124,92,252,0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.08) 0%, transparent 50%);
+  .icon-btn{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.2s ease;
+    flex-shrink:0;
+  }
+  .icon-btn.on{ color:var(--gold); border-color:rgba(227,184,119,0.35); }
+  .icon-btn svg{ width:17px; height:17px; }
+
+  /* Technique selector */
+  .tabs{
+    display:flex;
+    gap:8px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    padding:5px;
+    border-radius:14px;
+    margin:26px 0 34px;
+    max-width:100%;
+    overflow-x:auto;
+  }
+  .tab{
+    font-family:'Work Sans', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-dim);
+    background:transparent;
+    border:none;
+    padding:9px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.25s ease;
+  }
+  .tab.active{
+    background:rgba(227,184,119,0.12);
+    color:var(--gold);
   }
 
-  header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 24px 0 20px;
-    position: relative;
+  /* Breathing circle */
+  .stage{
+    position:relative;
+    width:min(78vw, 300px);
+    height:min(78vw, 300px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:28px;
+  }
+  .progress-ring{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    transform:rotate(-90deg);
+  }
+  .progress-ring circle{
+    fill:none;
+    stroke-width:2;
+  }
+  .progress-ring .track{
+    stroke:var(--line);
+  }
+  .progress-ring .indicator{
+    stroke:var(--gold);
+    stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke 0.6s ease;
+  }
+  .progress-ring .indicator.exhale{ stroke:var(--sage); }
+
+  .orb{
+    position:relative;
+    width:44%;
+    height:44%;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(227,184,119,0.55), rgba(227,184,119,0.08) 70%);
+    box-shadow:0 0 60px rgba(227,184,119,0.25);
+    transition:transform 0s linear, background 1.2s ease, box-shadow 1.2s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .orb.exhale-color{
+    background:radial-gradient(circle at 35% 30%, rgba(147,182,161,0.5), rgba(147,182,161,0.08) 70%);
+    box-shadow:0 0 60px rgba(147,182,161,0.22);
+  }
+  .orb-label{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:400;
+    text-align:center;
+    z-index:2;
+  }
+  .orb-sub{
+    font-size:11px;
+    color:var(--ink-dim);
+    font-family:'Work Sans', sans-serif;
+    margin-top:2px;
+  }
+  .phase-seconds{
+    position:absolute;
+    bottom:-2px;
+    right:2px;
+    font-family:'Fraunces', serif;
+    font-size:13px;
+    color:var(--ink-dim);
   }
 
-  header::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    margin: 16px auto 0;
-    border-radius: 2px;
+  .count{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    color:var(--ink-dim);
+    margin-bottom:22px;
+    letter-spacing:0.02em;
+    min-height:20px;
   }
 
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Controls */
+  .controls{
+    display:flex;
+    gap:12px;
+  }
+  button.action{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    padding:13px 28px;
+    border-radius:30px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.03);
+    color:var(--ink);
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  button.action.primary{
+    background:var(--gold);
+    color:#1a1420;
+    border:none;
+    font-weight:600;
+  }
+  button.action:hover{ transform:translateY(-1px); }
+  button.action:active{ transform:translateY(0px); }
+  button.action:disabled{ opacity:0.5; cursor:default; transform:none; }
+
+  .meta{
+    margin-top:28px;
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:13px;
+    max-width:320px;
+    line-height:1.6;
+  }
+  .meta strong{ color:var(--ink); font-weight:500; }
+
+  .cycles-target{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--ink-dim);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .cycles-target select{
+    background:rgba(255,255,255,0.05);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:4px 8px;
+    font-family:'Work Sans', sans-serif;
+    font-size:12px;
   }
 
-  .subtitle {
-    font-size: 11px;
-    color: var(--text2);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 4px;
+  .summary{
+    margin-top:16px;
+    text-align:center;
+    font-size:13px;
+    color:var(--gold);
+    min-height:18px;
+    font-family:'Fraunces', serif;
   }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 14px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-  }
-
-  .card-label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text2);
-    margin-bottom: 10px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-  }
-
-  /* COURS INPUT */
-  .cours-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .etf-input-block {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 14px;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s;
-  }
-
-  .etf-input-block:focus-within {
-    border-color: var(--accent);
-  }
-
-  .etf-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    margin-bottom: 2px;
-  }
-
-  .etf-name.dcam { color: var(--dcam); }
-  .etf-name.pems { color: var(--pems); }
-
-  .etf-isin {
-    font-size: 9px;
-    color: var(--text2);
-    margin-bottom: 10px;
-    letter-spacing: 0.05em;
-  }
-
-  .etf-input-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .input-field {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 8px 10px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .input-field:focus {
-    border-color: var(--accent);
-  }
-
-  .input-label {
-    font-size: 9px;
-    color: var(--text2);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-  }
-
-  /* BOUTON CALCUL */
-  .btn-calc {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--accent), #5a3fd4);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-bottom: 14px;
-    transition: opacity 0.2s, transform 0.1s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-calc:active { transform: scale(0.98); }
-  .btn-calc:hover { opacity: 0.9; }
-
-  /* TOTAL */
-  .total-card {
-    background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(0,212,170,0.1));
-    border: 1px solid rgba(124,92,252,0.3);
-  }
-
-  .total-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 4px 0;
-  }
-
-  .pv-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 6px;
-  }
-
-  .pv-positive { background: rgba(0,212,170,0.15); color: var(--positive); border: 1px solid rgba(0,212,170,0.3); }
-  .pv-negative { background: rgba(255,107,107,0.15); color: var(--negative); border: 1px solid rgba(255,107,107,0.3); }
-  .pv-neutral { background: rgba(240,192,96,0.15); color: var(--neutral); border: 1px solid rgba(240,192,96,0.3); }
-
-  /* LIGNE ETF */
-  .etf-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .etf-line:last-child { border-bottom: none; }
-
-  .etf-line-left { display: flex; flex-direction: column; gap: 3px; }
-  .etf-line-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
-  .etf-line-parts { font-size: 11px; color: var(--text2); }
-  .etf-line-right { text-align: right; }
-  .etf-line-value { font-size: 15px; font-weight: 500; }
-  .etf-line-pct { font-size: 11px; color: var(--text2); margin-top: 2px; }
-
-  /* RÉPARTITION */
-  .repartition-bar {
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background: var(--surface2);
-    margin: 10px 0;
-    display: flex;
-  }
-
-  .bar-dcam {
-    height: 100%;
-    background: linear-gradient(90deg, var(--dcam), #5a3fd4);
-    border-radius: 5px 0 0 5px;
-    transition: width 0.6s ease;
-  }
-
-  .bar-pems {
-    height: 100%;
-    background: linear-gradient(90deg, var(--pems), #00a884);
-    border-radius: 0 5px 5px 0;
-    transition: width 0.6s ease;
-  }
-
-  .repartition-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-  }
-
-  .label-dcam { color: var(--dcam); }
-  .label-pems { color: var(--pems); }
-
-  /* CONSEILS */
-  .conseil-item {
-    display: flex;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: flex-start;
-  }
-
-  .conseil-item:last-child { border-bottom: none; }
-
-  .conseil-icon {
-    font-size: 16px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .conseil-text {
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--text);
-  }
-
-  .conseil-text strong {
-    color: var(--accent2);
-    font-weight: 500;
-  }
-
-  /* DCA NEXT */
-  .dca-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 6px;
-  }
-
-  .dca-block {
-    background: var(--surface2);
-    border-radius: 9px;
-    padding: 12px;
-    text-align: center;
-  }
-
-  .dca-etf { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-  .dca-parts { font-size: 20px; font-weight: 500; }
-  .dca-montant { font-size: 11px; color: var(--text2); margin-top: 3px; }
-
-  /* STAT ROW */
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-  }
-  .stat-row:last-child { border-bottom: none; }
-  .stat-key { color: var(--text2); }
-  .stat-val { font-weight: 500; }
-
-  /* DISCLAIMER */
-  .disclaimer {
-    text-align: center;
-    font-size: 10px;
-    color: var(--text2);
-    margin-top: 20px;
-    padding: 0 10px;
-    line-height: 1.6;
-    opacity: 0.6;
-  }
-
-  /* ANIMATION */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .animate { animation: fadeIn 0.4s ease forwards; }
-  .hidden { display: none; }
-
-  #results { opacity: 0; transition: opacity 0.4s; }
-  #results.visible { opacity: 1; }
-
-  .pulse {
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  .live-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--positive);
-    margin-right: 5px;
-    animation: pulse 2s infinite;
+  @media (prefers-reduced-motion: reduce){
+    .orb{ transition:none; }
+    .progress-ring .indicator{ transition:none; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Mon PEA</h1>
-  <div class="subtitle">Tableau de Bord · Fortuneo</div>
-</header>
+  <div class="topbar">
+    <div class="titleblock">
+      <div class="eyebrow">Guide de respiration</div>
+      <h1>Respire <em>consciemment</em></h1>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <select id="voicePicker" style="display:none; background:rgba(255,255,255,0.05); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:6px 8px; font-family:'Work Sans', sans-serif; font-size:11px; max-width:130px;"></select>
+      <button class="icon-btn on" id="voiceBtn" title="Activer/désactiver la voix">
+        <svg id="voiceIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg>
+        <svg id="voiceIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-5.6-1.5"/><path d="M9 9v3a3 3 0 0 0 4.2 2.7"/><path d="M19 11a7 7 0 0 1-9.8 6.4"/><path d="M5 11a7 7 0 0 0 1.3 4.1"/><path d="M12 18v3"/><path d="M3 3l18 18"/></svg>
+      </button>
+      <button class="icon-btn on" id="soundBtn" title="Activer/désactiver le son">
+        <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+      </button>
+    </div>
+  </div>
 
-<!-- SAISIE COURS -->
-<div class="card">
-  <div class="card-label">📊 Entrer les cours actuels</div>
-  <div class="cours-grid">
-    <div class="etf-input-block">
-      <div class="etf-name dcam">DCAM</div>
-      <div class="etf-isin">FR001400U5Q4</div>
-      <div class="etf-input-row">
-        <div>
-          <div class="input-label">Cours (€)</div>
-          <input type="number" id="cours-dcam" class="input-field" placeholder="5.595" step="0.001" value="5.595">
-        </div>
-        <div>
-          <div class="input-label">Nb parts</div>
-          <input type="number" id="parts-dcam" class="input-field" placeholder="999" value="999">
-        </div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-technique="478">4-7-8</button>
+    <button class="tab" data-technique="coherence">Cohérence cardiaque</button>
+    <button class="tab" data-technique="carre">Carré</button>
+  </div>
+
+  <div class="stage">
+    <svg class="progress-ring" viewBox="0 0 300 300">
+      <circle class="track" cx="150" cy="150" r="140"/>
+      <circle class="indicator" id="ringIndicator" cx="150" cy="150" r="140"/>
+    </svg>
+    <div class="orb" id="orb">
+      <div style="text-align:center;">
+        <div class="orb-label" id="orbLabel">Prêt</div>
+        <div class="orb-sub" id="orbSub"></div>
       </div>
-    </div>
-    <div class="etf-input-block">
-      <div class="etf-name pems">PEMS</div>
-      <div class="etf-isin">FR001400ZGO4</div>
-      <div class="etf-input-row">
-        <div>
-          <div class="input-label">Cours (€)</div>
-          <input type="number" id="cours-pems" class="input-field" placeholder="6.712" step="0.001" value="6.712">
-        </div>
-        <div>
-          <div class="input-label">Nb parts</div>
-          <input type="number" id="parts-pems" class="input-field" placeholder="153" value="153">
-        </div>
-      </div>
+      <div class="phase-seconds" id="phaseSeconds"></div>
     </div>
   </div>
 
-  <div style="margin-top: 12px;">
-    <div class="input-label">Montant total investi (€)</div>
-    <input type="number" id="investi" class="input-field" placeholder="6400" value="6400">
+  <div class="count" id="cycleCount"></div>
+
+  <div class="controls">
+    <button class="action primary" id="startBtn">Commencer</button>
+    <button class="action" id="resetBtn">Réinitialiser</button>
   </div>
 
-  <div style="margin-top: 12px;">
-    <div class="input-label">Versement mensuel DCA (€)</div>
-    <input type="number" id="dca-mensuel" class="input-field" placeholder="150" value="150">
-  </div>
-</div>
-
-<button class="btn-calc" onclick="calculer()">⚡ Calculer mon portefeuille</button>
-
-<!-- RÉSULTATS -->
-<div id="results">
-
-  <!-- TOTAL -->
-  <div class="card total-card">
-    <div class="card-label"><span class="live-dot"></span>Valeur du portefeuille</div>
-    <div class="total-value" id="total-val">—</div>
-    <div id="pv-badge"></div>
+  <div class="cycles-target" id="cyclesTargetWrap">
+    <span>Objectif :</span>
+    <select id="cyclesTarget"></select>
   </div>
 
-  <!-- ETF BREAKDOWN -->
-  <div class="card">
-    <div class="card-label">📦 Détail par ETF</div>
-    <div class="etf-line">
-      <div class="etf-line-left">
-        <div class="etf-line-name" style="color: var(--dcam)">DCAM</div>
-        <div class="etf-line-parts" id="dcam-parts-detail">— parts</div>
-      </div>
-      <div class="etf-line-right">
-        <div class="etf-line-value" id="dcam-val">—</div>
-        <div class="etf-line-pct" id="dcam-pct">—</div>
-      </div>
-    </div>
-    <div class="etf-line">
-      <div class="etf-line-left">
-        <div class="etf-line-name" style="color: var(--pems)">PEMS</div>
-        <div class="etf-line-parts" id="pems-parts-detail">— parts</div>
-      </div>
-      <div class="etf-line-right">
-        <div class="etf-line-value" id="pems-val">—</div>
-        <div class="etf-line-pct" id="pems-pct">—</div>
-      </div>
-    </div>
-  </div>
+  <div class="summary" id="summary"></div>
 
-  <!-- RÉPARTITION -->
-  <div class="card">
-    <div class="card-label">🎯 Répartition actuelle</div>
-    <div class="repartition-bar">
-      <div class="bar-dcam" id="bar-dcam" style="width: 85%"></div>
-      <div class="bar-pems" id="bar-pems" style="width: 15%"></div>
-    </div>
-    <div class="repartition-labels">
-      <span class="label-dcam" id="label-dcam">DCAM — %</span>
-      <span class="label-pems" id="label-pems">PEMS — %</span>
-    </div>
-    <div id="repartition-conseil" style="margin-top: 10px; font-size: 11px;"></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="card">
-    <div class="card-label">📈 Statistiques</div>
-    <div class="stat-row">
-      <span class="stat-key">Prix moyen DCAM</span>
-      <span class="stat-val" id="pm-dcam">—</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-key">Objectif cible</span>
-      <span class="stat-val">85% DCAM / 15% PEMS</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-key">Enveloppe PEA utilisée</span>
-      <span class="stat-val" id="pea-utilise">—</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-key">Plafond PEA restant</span>
-      <span class="stat-val" id="pea-restant">—</span>
-    </div>
-  </div>
-
-  <!-- PROCHAIN DCA -->
-  <div class="card">
-    <div class="card-label">📅 Prochain DCA mensuel</div>
-    <div class="dca-grid">
-      <div class="dca-block">
-        <div class="dca-etf" style="color: var(--dcam)">DCAM</div>
-        <div class="dca-parts" id="dca-dcam-parts">—</div>
-        <div class="dca-montant" id="dca-dcam-montant">parts (~—€)</div>
-      </div>
-      <div class="dca-block">
-        <div class="dca-etf" style="color: var(--pems)">PEMS</div>
-        <div class="dca-parts" id="dca-pems-parts">—</div>
-        <div class="dca-montant" id="dca-pems-montant">parts (~—€)</div>
-      </div>
-    </div>
-    <div style="margin-top: 10px; font-size: 11px; color: var(--text2); text-align: center;" id="dca-cash-restant"></div>
-  </div>
-
-  <!-- CONSEILS -->
-  <div class="card">
-    <div class="card-label">💡 Conseils personnalisés</div>
-    <div id="conseils-container"></div>
-  </div>
-
-</div>
-
-<div class="disclaimer">
-  ⚠️ Ces informations sont données à titre indicatif uniquement.<br>
-  Elles ne constituent pas un conseil en investissement.<br>
-  Les performances passées ne préjugent pas des performances futures.
-</div>
+  <div class="meta" id="meta"></div>
 
 <script>
-function fmt(n) {
-  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+const TECHNIQUES = {
+  478: {
+    name: '4-7-8',
+    desc: 'Idéale pour calmer une montée de stress rapide.',
+    phases: [
+      {label:'Inspire', sub:'par le nez', duration:4, exhale:false, scale:1},
+      {label:'Retiens', sub:'', duration:7, exhale:false, scale:null},
+      {label:'Expire', sub:'par la bouche', duration:8, exhale:true, scale:0.7},
+    ],
+    defaultCycles: 4,
+    cycleOptions: [4,6,8]
+  },
+  coherence: {
+    name: 'Cohérence cardiaque',
+    desc: 'À utiliser en routine, 3x/jour, pour faire baisser le niveau de stress général.',
+    phases: [
+      {label:'Inspire', sub:'', duration:5, exhale:false, scale:1},
+      {label:'Expire', sub:'', duration:5, exhale:true, scale:0.7},
+    ],
+    defaultCycles: 30,
+    cycleOptions: [6, 15, 30]
+  },
+  carre: {
+    name: 'Carré',
+    desc: 'Pour se recentrer vite, avant un moment tendu.',
+    phases: [
+      {label:'Inspire', sub:'', duration:4, exhale:false, scale:1},
+      {label:'Retiens', sub:'', duration:4, exhale:false, scale:null},
+      {label:'Expire', sub:'', duration:4, exhale:true, scale:0.7},
+      {label:'Retiens', sub:'', duration:4, exhale:false, scale:null},
+    ],
+    defaultCycles: 5,
+    cycleOptions: [4,5,8]
+  }
+};
+
+let currentTechnique = '478';
+let state = 'idle'; // idle | running | paused | done
+let phaseIndex = 0;
+let cycleNum = 0;
+let targetCycles = TECHNIQUES[currentTechnique].defaultCycles;
+let timerHandle = null;
+let secondsLeft = 0;
+let sessionStartTime = null;
+let soundOn = true;
+let voiceOn = true;
+let audioCtx = null;
+let frenchVoice = null;
+let availableFrenchVoices = [];
+
+const QUALITY_HINTS = ['enhanced', 'premium', 'natural', 'neural', 'google', 'siri'];
+
+function rankVoice(v){
+  const name = v.name.toLowerCase();
+  let score = 0;
+  QUALITY_HINTS.forEach((hint, i) => {
+    if(name.includes(hint)) score += (QUALITY_HINTS.length - i) * 10;
+  });
+  if(v.localService) score += 3; // local voices are often higher quality & lower latency
+  if(v.lang === 'fr-FR') score += 2;
+  return score;
 }
 
-function calculer() {
-  const coursDCAM = parseFloat(document.getElementById('cours-dcam').value) || 5.595;
-  const coursesPEMS = parseFloat(document.getElementById('cours-pems').value) || 6.712;
-  const partsDCAM = parseInt(document.getElementById('parts-dcam').value) || 999;
-  const partsPEMS = parseInt(document.getElementById('parts-pems').value) || 153;
-  const investi = parseFloat(document.getElementById('investi').value) || 6400;
-  const dcaMensuel = parseFloat(document.getElementById('dca-mensuel').value) || 150;
+function pickFrenchVoice(){
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  availableFrenchVoices = voices
+    .filter(v => v.lang && v.lang.toLowerCase().startsWith('fr'))
+    .sort((a,b) => rankVoice(b) - rankVoice(a));
+  if(availableFrenchVoices.length){
+    const saved = localStorage.getItem && null; // no persistence, session only
+    frenchVoice = availableFrenchVoices[0];
+  }
+  populateVoicePicker();
+}
+if('speechSynthesis' in window){
+  pickFrenchVoice();
+  window.speechSynthesis.onvoiceschanged = pickFrenchVoice;
+}
 
-  const valDCAM = coursDCAM * partsDCAM;
-  const valPEMS = coursesPEMS * partsPEMS;
-  const total = valDCAM + valPEMS;
-  const pv = total - investi;
-  const pvPct = (pv / investi) * 100;
+function populateVoicePicker(){
+  const picker = document.getElementById('voicePicker');
+  if(!picker) return;
+  if(availableFrenchVoices.length <= 1){
+    picker.style.display = 'none';
+    return;
+  }
+  picker.style.display = 'inline-block';
+  picker.innerHTML = '';
+  availableFrenchVoices.forEach((v, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = v.name;
+    picker.appendChild(opt);
+  });
+  picker.value = 0;
+}
 
-  const pctDCAM = (valDCAM / total) * 100;
-  const pctPEMS = (valPEMS / total) * 100;
+function speakPhase(text){
+  if(!voiceOn || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'fr-FR';
+  if(frenchVoice) utter.voice = frenchVoice;
+  utter.rate = 0.88;
+  utter.pitch = 0.98;
+  utter.volume = 0.9;
+  window.speechSynthesis.speak(utter);
+}
 
-  // Total
-  document.getElementById('total-val').textContent = fmt(total);
+const orb = document.getElementById('orb');
+const orbLabel = document.getElementById('orbLabel');
+const orbSub = document.getElementById('orbSub');
+const phaseSecondsEl = document.getElementById('phaseSeconds');
+const cycleCountEl = document.getElementById('cycleCount');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const metaEl = document.getElementById('meta');
+const summaryEl = document.getElementById('summary');
+const cyclesTargetSelect = document.getElementById('cyclesTarget');
+const tabs = document.querySelectorAll('.tab');
+const soundBtn = document.getElementById('soundBtn');
+const soundIconOn = document.getElementById('soundIconOn');
+const soundIconOff = document.getElementById('soundIconOff');
+const ringIndicator = document.getElementById('ringIndicator');
 
-  // PV Badge
-  const badge = document.getElementById('pv-badge');
-  const sign = pv >= 0 ? '+' : '';
-  const cls = Math.abs(pvPct) < 0.5 ? 'pv-neutral' : pv >= 0 ? 'pv-positive' : 'pv-negative';
-  const emoji = pv >= 0 ? '📈' : '📉';
-  badge.innerHTML = `<div class="pv-badge ${cls}">${emoji} ${sign}${fmt(pv)} (${sign}${pvPct.toFixed(2)}%)</div>`;
+const RING_RADIUS = 140;
+const RING_CIRCUM = 2 * Math.PI * RING_RADIUS;
+ringIndicator.style.strokeDasharray = RING_CIRCUM;
+ringIndicator.style.strokeDashoffset = 0;
 
-  // ETF details
-  document.getElementById('dcam-parts-detail').textContent = `${partsDCAM} parts × ${coursDCAM.toFixed(3)}€`;
-  document.getElementById('pems-parts-detail').textContent = `${partsPEMS} parts × ${coursesPEMS.toFixed(3)}€`;
-  document.getElementById('dcam-val').textContent = fmt(valDCAM);
-  document.getElementById('pems-val').textContent = fmt(valPEMS);
-  document.getElementById('dcam-pct').textContent = `${pctDCAM.toFixed(1)}% du portfolio`;
-  document.getElementById('pems-pct').textContent = `${pctPEMS.toFixed(1)}% du portfolio`;
+function playTone(freq, duration){
+  if(!soundOn) return;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.08);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }catch(e){}
+}
 
-  // Répartition bar
-  document.getElementById('bar-dcam').style.width = pctDCAM.toFixed(1) + '%';
-  document.getElementById('bar-pems').style.width = pctPEMS.toFixed(1) + '%';
-  document.getElementById('label-dcam').textContent = `DCAM — ${pctDCAM.toFixed(1)}%`;
-  document.getElementById('label-pems').textContent = `PEMS — ${pctPEMS.toFixed(1)}%`;
+function vibrate(ms){
+  if(navigator.vibrate) navigator.vibrate(ms);
+}
 
-  // Conseil répartition
-  const repDiv = document.getElementById('repartition-conseil');
-  const ecartDCAM = pctDCAM - 85;
-  if (Math.abs(ecartDCAM) <= 2) {
-    repDiv.innerHTML = `<span style="color: var(--positive)">✅ Répartition parfaite — tu es à l'objectif 85/15</span>`;
-  } else if (pctDCAM > 87) {
-    repDiv.innerHTML = `<span style="color: var(--neutral)">⚠️ Trop de DCAM (+${ecartDCAM.toFixed(1)}%) — achète du PEMS en priorité</span>`;
+function populateCycleOptions(){
+  const t = TECHNIQUES[currentTechnique];
+  cyclesTargetSelect.innerHTML = '';
+  t.cycleOptions.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n + ' cycles';
+    if(n === t.defaultCycles) opt.selected = true;
+    cyclesTargetSelect.appendChild(opt);
+  });
+  targetCycles = t.defaultCycles;
+}
+
+function renderMeta(){
+  const t = TECHNIQUES[currentTechnique];
+  metaEl.innerHTML = `<strong>${t.name}</strong> — ${t.desc}`;
+}
+
+function resetVisual(){
+  orb.style.transitionDuration = '0.6s';
+  orb.style.transform = 'scale(0.72)';
+  orb.classList.remove('exhale-color');
+  orbLabel.textContent = 'Prêt';
+  orbSub.textContent = '';
+  phaseSecondsEl.textContent = '';
+  cycleCountEl.textContent = '';
+  ringIndicator.style.transitionDuration = '0.3s';
+  ringIndicator.style.strokeDashoffset = 0;
+  ringIndicator.classList.remove('exhale');
+  summaryEl.textContent = '';
+}
+
+function stopTimer(){
+  clearInterval(timerHandle);
+  timerHandle = null;
+}
+
+function setPhase(idx){
+  const t = TECHNIQUES[currentTechnique];
+  const phase = t.phases[idx];
+  phaseIndex = idx;
+  secondsLeft = phase.duration;
+
+  orbLabel.textContent = phase.label;
+  orbSub.textContent = phase.sub;
+  phaseSecondsEl.textContent = secondsLeft;
+
+  if(phase.exhale){
+    orb.classList.add('exhale-color');
+    ringIndicator.classList.add('exhale');
   } else {
-    repDiv.innerHTML = `<span style="color: var(--neutral)">⚠️ Trop de PEMS — achète du DCAM en priorité</span>`;
+    orb.classList.remove('exhale-color');
+    if(phase.label === 'Inspire') ringIndicator.classList.remove('exhale');
   }
 
-  // Stats
-  const pmDCAM = investi * 0.85 / partsDCAM;
-  document.getElementById('pm-dcam').textContent = pmDCAM.toFixed(3) + ' €';
-  const peaUtilise = investi;
-  document.getElementById('pea-utilise').textContent = fmt(peaUtilise) + ` (${((peaUtilise/150000)*100).toFixed(1)}%)`;
-  document.getElementById('pea-restant').textContent = fmt(150000 - peaUtilise);
-
-  // DCA calcul
-  const montantDCAM = dcaMensuel * 0.85;
-  const montantPEMS = dcaMensuel * 0.15;
-  const nbDCAM = Math.floor(montantDCAM / coursDCAM);
-  const nbPEMS = Math.floor(montantPEMS / coursesPEMS);
-  const depenseDCAM = nbDCAM * coursDCAM;
-  const depensePEMS = nbPEMS * coursesPEMS;
-  const cashRestant = dcaMensuel - depenseDCAM - depensePEMS;
-
-  document.getElementById('dca-dcam-parts').textContent = nbDCAM;
-  document.getElementById('dca-pems-parts').textContent = nbPEMS;
-  document.getElementById('dca-dcam-montant').textContent = `parts (~${depenseDCAM.toFixed(0)}€)`;
-  document.getElementById('dca-pems-montant').textContent = `parts (~${depensePEMS.toFixed(0)}€)`;
-  document.getElementById('dca-cash-restant').textContent = `Cash résiduel : ~${cashRestant.toFixed(2)}€ reste en compte espèces`;
-
-  // Conseils dynamiques
-  const conseils = [];
-
-  if (pv < -200) {
-    conseils.push({ icon: '💪', text: '<strong>Ne panique pas</strong> — une baisse latente est normale. Le marché se remet toujours. Continue ton DCA mensuel sans hésiter.' });
-  } else if (pv >= 0) {
-    conseils.push({ icon: '🎉', text: `Tu es en <strong>plus-value de ${fmt(pv)}</strong> — le travail paie ! Continue ton DCA régulièrement.` });
+  // Orb scale
+  orb.style.transitionDuration = phase.duration + 's';
+  if(phase.scale !== null){
+    orb.style.transform = `scale(${phase.scale})`;
   }
 
-  if (Math.abs(ecartDCAM) > 3) {
-    if (pctDCAM > 87) {
-      conseils.push({ icon: '⚖️', text: `Ta répartition est à <strong>${pctDCAM.toFixed(1)}% DCAM</strong>. Lors de ton prochain DCA, achète uniquement du PEMS pour rééquilibrer.` });
-    } else {
-      conseils.push({ icon: '⚖️', text: `Ta répartition est à <strong>${pctPEMS.toFixed(1)}% PEMS</strong>. Lors de ton prochain DCA, achète uniquement du DCAM.` });
-    }
-  }
+  // Progress ring: fills over the phase duration
+  ringIndicator.style.transitionDuration = '0s';
+  ringIndicator.style.strokeDashoffset = RING_CIRCUM;
+  // force reflow then animate to 0 over phase duration
+  void ringIndicator.getBoundingClientRect();
+  ringIndicator.style.transitionDuration = phase.duration + 's';
+  ringIndicator.style.strokeDashoffset = 0;
 
-  conseils.push({ icon: '📅', text: `Ton prochain DCA est le <strong>5 du mois</strong> — programme un virement de <strong>${fmt(dcaMensuel)}</strong> sur ton PEA Fortuneo.` });
-
-  conseils.push({ icon: '🔄', text: `Rééquilibre ton portefeuille <strong>une fois par an maximum</strong>. Pas besoin d'intervenir plus souvent.` });
-
-  if (total > 5000) {
-    conseils.push({ icon: '⏳', text: `Tu as versé ${fmt(investi)} sur ton PEA. Rappelle-toi : <strong>ne retire pas avant 5 ans</strong> pour bénéficier de la fiscalité avantageuse (17,2% seulement).` });
-  }
-
-  const container = document.getElementById('conseils-container');
-  container.innerHTML = conseils.map(c => `
-    <div class="conseil-item">
-      <div class="conseil-icon">${c.icon}</div>
-      <div class="conseil-text">${c.text}</div>
-    </div>
-  `).join('');
-
-  // Show results
-  const results = document.getElementById('results');
-  results.classList.add('visible');
-  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // audio + haptic + voice cue on phase change
+  const freqMap = {'Inspire':523, 'Retiens':440, 'Expire':349};
+  playTone(freqMap[phase.label] || 440, 0.5);
+  vibrate(30);
+  speakPhase(phase.sub ? `${phase.label}, ${phase.sub}` : phase.label);
 }
 
-// Auto-calcul au chargement
-window.addEventListener('load', () => {
-  setTimeout(calculer, 300);
+function tick(){
+  secondsLeft -= 1;
+  phaseSecondsEl.textContent = Math.max(secondsLeft, 0);
+  if(secondsLeft <= 0){
+    const t = TECHNIQUES[currentTechnique];
+    let nextIdx = phaseIndex + 1;
+    if(nextIdx >= t.phases.length){
+      nextIdx = 0;
+      cycleNum += 1;
+      cycleCountEl.textContent = `Cycle ${cycleNum} / ${targetCycles}`;
+      if(cycleNum >= targetCycles){
+        finishSession();
+        return;
+      }
+    }
+    setPhase(nextIdx);
+  }
+}
+
+function finishSession(){
+  stopTimer();
+  state = 'done';
+  orbLabel.textContent = 'Terminé';
+  orbSub.textContent = '';
+  phaseSecondsEl.textContent = '';
+  orb.style.transitionDuration = '1.2s';
+  orb.style.transform = 'scale(0.85)';
+  orb.classList.remove('exhale-color');
+  ringIndicator.style.transitionDuration = '0.6s';
+  ringIndicator.style.strokeDashoffset = 0;
+  const elapsed = Math.round((Date.now() - sessionStartTime) / 1000);
+  const mins = Math.floor(elapsed / 60);
+  const secs = elapsed % 60;
+  const timeStr = mins > 0 ? `${mins} min ${secs}s` : `${secs}s`;
+  summaryEl.textContent = `${cycleNum} cycles complétés en ${timeStr}`;
+  playTone(659, 0.8);
+  vibrate([40,60,40]);
+  speakPhase(`Terminé. ${cycleNum} cycles complétés.`);
+  startBtn.textContent = 'Recommencer';
+  startBtn.disabled = false;
+}
+
+function startSession(){
+  state = 'running';
+  cycleNum = 0;
+  sessionStartTime = Date.now();
+  summaryEl.textContent = '';
+  cycleCountEl.textContent = `Cycle 0 / ${targetCycles}`;
+  startBtn.textContent = 'Pause';
+  setPhase(0);
+  timerHandle = setInterval(tick, 1000);
+}
+
+function pauseSession(){
+  state = 'paused';
+  stopTimer();
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  orb.style.transitionDuration = '0s';
+  ringIndicator.style.transitionDuration = '0s';
+  // freeze current computed values by reapplying current transform/offset (browser keeps them since we set duration 0)
+  startBtn.textContent = 'Reprendre';
+}
+
+function resumeSession(){
+  state = 'running';
+  const t = TECHNIQUES[currentTechnique];
+  const phase = t.phases[phaseIndex];
+  // resume remaining time on orb scale + ring
+  orb.style.transitionDuration = secondsLeft + 's';
+  if(phase.scale !== null){
+    orb.style.transform = `scale(${phase.scale})`;
+  }
+  ringIndicator.style.transitionDuration = secondsLeft + 's';
+  ringIndicator.style.strokeDashoffset = 0;
+  startBtn.textContent = 'Pause';
+  timerHandle = setInterval(tick, 1000);
+}
+
+startBtn.addEventListener('click', () => {
+  if(state === 'idle' || state === 'done'){
+    startSession();
+  } else if(state === 'running'){
+    pauseSession();
+  } else if(state === 'paused'){
+    resumeSession();
+  }
 });
+
+resetBtn.addEventListener('click', () => {
+  stopTimer();
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  state = 'idle';
+  cycleNum = 0;
+  startBtn.disabled = false;
+  startBtn.textContent = 'Commencer';
+  resetVisual();
+});
+
+cyclesTargetSelect.addEventListener('change', (e) => {
+  targetCycles = parseInt(e.target.value, 10);
+});
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    stopTimer();
+    state = 'idle';
+    cycleNum = 0;
+    startBtn.disabled = false;
+    startBtn.textContent = 'Commencer';
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTechnique = tab.dataset.technique;
+    populateCycleOptions();
+    renderMeta();
+    resetVisual();
+  });
+});
+
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.classList.toggle('on', soundOn);
+  soundIconOn.style.display = soundOn ? 'block' : 'none';
+  soundIconOff.style.display = soundOn ? 'none' : 'block';
+});
+
+const voiceBtn = document.getElementById('voiceBtn');
+const voiceIconOn = document.getElementById('voiceIconOn');
+const voiceIconOff = document.getElementById('voiceIconOff');
+const voicePicker = document.getElementById('voicePicker');
+
+voicePicker.addEventListener('change', (e) => {
+  const idx = parseInt(e.target.value, 10);
+  frenchVoice = availableFrenchVoices[idx];
+  speakPhase('Bonjour');
+});
+
+voiceBtn.addEventListener('click', () => {
+  voiceOn = !voiceOn;
+  voiceBtn.classList.toggle('on', voiceOn);
+  voiceIconOn.style.display = voiceOn ? 'block' : 'none';
+  voiceIconOff.style.display = voiceOn ? 'none' : 'block';
+  if(!voiceOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+});
+
+// init
+populateCycleOptions();
+renderMeta();
+resetVisual();
+
+// PWA: register service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
 </script>
 
 </body>
