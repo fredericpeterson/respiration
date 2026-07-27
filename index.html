@@ -371,6 +371,30 @@ let voiceOn = true;
 let audioCtx = null;
 let frenchVoice = null;
 let availableFrenchVoices = [];
+let wakeLock = null;
+
+async function acquireWakeLock(){
+  if(!('wakeLock' in navigator)) return;
+  try{
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  }catch(e){
+    wakeLock = null;
+  }
+}
+
+function releaseWakeLock(){
+  if(wakeLock){
+    wakeLock.release().catch(() => {});
+    wakeLock = null;
+  }
+}
+
+document.addEventListener('visibilitychange', async () => {
+  if(document.visibilityState === 'visible' && state === 'running' && !wakeLock){
+    await acquireWakeLock();
+  }
+});
 
 const QUALITY_HINTS = ['enhanced', 'premium', 'natural', 'neural', 'google', 'siri'];
 
@@ -571,6 +595,7 @@ function tick(){
 
 function finishSession(){
   stopTimer();
+  releaseWakeLock();
   state = 'done';
   orbLabel.textContent = 'Terminé';
   orbSub.textContent = '';
@@ -601,11 +626,13 @@ function startSession(){
   startBtn.textContent = 'Pause';
   setPhase(0);
   timerHandle = setInterval(tick, 1000);
+  acquireWakeLock();
 }
 
 function pauseSession(){
   state = 'paused';
   stopTimer();
+  releaseWakeLock();
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   orb.style.transitionDuration = '0s';
   ringIndicator.style.transitionDuration = '0s';
@@ -626,6 +653,7 @@ function resumeSession(){
   ringIndicator.style.strokeDashoffset = 0;
   startBtn.textContent = 'Pause';
   timerHandle = setInterval(tick, 1000);
+  acquireWakeLock();
 }
 
 startBtn.addEventListener('click', () => {
@@ -640,6 +668,7 @@ startBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', () => {
   stopTimer();
+  releaseWakeLock();
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   state = 'idle';
   cycleNum = 0;
