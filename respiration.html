@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Souffle — Guide de respiration</title>
+<meta name="description" content="Guide de respiration guidée : 4-7-8, cohérence cardiaque et respiration carrée.">
+<meta name="theme-color" content="#141a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Souffle">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#141a2e;
+    --bg-2:#231a30;
+    --ink:#e8eaf2;
+    --ink-dim:#8991ab;
+    --gold:#e3b877;
+    --sage:#93b6a1;
+    --line:rgba(232,234,242,0.09);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, #2a2340 0%, transparent 55%),
+      linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 20px 44px;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  .topbar{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .titleblock{ text-align:left; }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:26px;
+    letter-spacing:0.01em;
+    color:var(--ink);
+  }
+  h1 em{ font-style:italic; color:var(--gold); }
+
+  .icon-btn{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.2s ease;
+    flex-shrink:0;
+  }
+  .icon-btn.on{ color:var(--gold); border-color:rgba(227,184,119,0.35); }
+  .icon-btn svg{ width:17px; height:17px; }
+
+  /* Technique selector */
+  .tabs{
+    display:flex;
+    gap:8px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    padding:5px;
+    border-radius:14px;
+    margin:26px 0 34px;
+    max-width:100%;
+    overflow-x:auto;
+  }
+  .tab{
+    font-family:'Work Sans', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-dim);
+    background:transparent;
+    border:none;
+    padding:9px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.25s ease;
+  }
+  .tab.active{
+    background:rgba(227,184,119,0.12);
+    color:var(--gold);
+  }
+
+  /* Breathing circle */
+  .stage{
+    position:relative;
+    width:min(78vw, 300px);
+    height:min(78vw, 300px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:28px;
+  }
+  .progress-ring{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    transform:rotate(-90deg);
+  }
+  .progress-ring circle{
+    fill:none;
+    stroke-width:2;
+  }
+  .progress-ring .track{
+    stroke:var(--line);
+  }
+  .progress-ring .indicator{
+    stroke:var(--gold);
+    stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke 0.6s ease;
+  }
+  .progress-ring .indicator.exhale{ stroke:var(--sage); }
+
+  .orb{
+    position:relative;
+    width:44%;
+    height:44%;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(227,184,119,0.55), rgba(227,184,119,0.08) 70%);
+    box-shadow:0 0 60px rgba(227,184,119,0.25);
+    transition:transform 0s linear, background 1.2s ease, box-shadow 1.2s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .orb.exhale-color{
+    background:radial-gradient(circle at 35% 30%, rgba(147,182,161,0.5), rgba(147,182,161,0.08) 70%);
+    box-shadow:0 0 60px rgba(147,182,161,0.22);
+  }
+  .orb-label{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:400;
+    text-align:center;
+    z-index:2;
+  }
+  .orb-sub{
+    font-size:11px;
+    color:var(--ink-dim);
+    font-family:'Work Sans', sans-serif;
+    margin-top:2px;
+  }
+  .phase-seconds{
+    position:absolute;
+    bottom:-2px;
+    right:2px;
+    font-family:'Fraunces', serif;
+    font-size:13px;
+    color:var(--ink-dim);
+  }
+
+  .count{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    color:var(--ink-dim);
+    margin-bottom:22px;
+    letter-spacing:0.02em;
+    min-height:20px;
+  }
+
+  /* Controls */
+  .controls{
+    display:flex;
+    gap:12px;
+  }
+  button.action{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    padding:13px 28px;
+    border-radius:30px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.03);
+    color:var(--ink);
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  button.action.primary{
+    background:var(--gold);
+    color:#1a1420;
+    border:none;
+    font-weight:600;
+  }
+  button.action:hover{ transform:translateY(-1px); }
+  button.action:active{ transform:translateY(0px); }
+  button.action:disabled{ opacity:0.5; cursor:default; transform:none; }
+
+  .meta{
+    margin-top:28px;
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:13px;
+    max-width:320px;
+    line-height:1.6;
+  }
+  .meta strong{ color:var(--ink); font-weight:500; }
+
+  .cycles-target{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--ink-dim);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .cycles-target select{
+    background:rgba(255,255,255,0.05);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:4px 8px;
+    font-family:'Work Sans', sans-serif;
+    font-size:12px;
+  }
+
+  .summary{
+    margin-top:16px;
+    text-align:center;
+    font-size:13px;
+    color:var(--gold);
+    min-height:18px;
+    font-family:'Fraunces', serif;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .orb{ transition:none; }
+    .progress-ring .indicator{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="titleblock">
+      <div class="eyebrow">Guide de respiration</div>
+      <h1>Respire <em>consciemment</em></h1>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <select id="voicePicker" style="display:none; background:rgba(255,255,255,0.05); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:6px 8px; font-family:'Work Sans', sans-serif; font-size:11px; max-width:130px;"></select>
+      <button class="icon-btn on" id="voiceBtn" title="Activer/désactiver la voix">
+        <svg id="voiceIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg>
+        <svg id="voiceIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-5.6-1.5"/><path d="M9 9v3a3 3 0 0 0 4.2 2.7"/><path d="M19 11a7 7 0 0 1-9.8 6.4"/><path d="M5 11a7 7 0 0 0 1.3 4.1"/><path d="M12 18v3"/><path d="M3 3l18 18"/></svg>
+      </button>
+      <button class="icon-btn on" id="soundBtn" title="Activer/désactiver le son">
+        <svg id="soundIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a9 9 0 0 1 0 12"/></svg>
+        <svg id="soundIconOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-technique="478">4-7-8</button>
+    <button class="tab" data-technique="coherence">Cohérence cardiaque</button>
+    <button class="tab" data-technique="carre">Carré</button>
+  </div>
+
+  <div class="stage">
+    <svg class="progress-ring" viewBox="0 0 300 300">
+      <circle class="track" cx="150" cy="150" r="140"/>
+      <circle class="indicator" id="ringIndicator" cx="150" cy="150" r="140"/>
+    </svg>
+    <div class="orb" id="orb">
+      <div style="text-align:center;">
+        <div class="orb-label" id="orbLabel">Prêt</div>
+        <div class="orb-sub" id="orbSub"></div>
+      </div>
+      <div class="phase-seconds" id="phaseSeconds"></div>
+    </div>
+  </div>
+
+  <div class="count" id="cycleCount"></div>
+
+  <div class="controls">
+    <button class="action primary" id="startBtn">Commencer</button>
+    <button class="action" id="resetBtn">Réinitialiser</button>
+  </div>
+
+  <div class="cycles-target" id="cyclesTargetWrap">
+    <span>Objectif :</span>
+    <select id="cyclesTarget"></select>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="meta" id="meta"></div>
+
+<script>
+const TECHNIQUES = {
+  478: {
+    name: '4-7-8',
+    desc: 'Idéale pour calmer une montée de stress rapide.',
+    phases: [
+      {label:'Inspire', sub:'par le nez', duration:4, exhale:false, scale:1},
+      {label:'Retiens', sub:'', duration:7, exhale:false, scale:null},
+      {label:'Expire', sub:'par la bouche', duration:8, exhale:true, scale:0.7},
+    ],
+    defaultCycles: 4,
+    cycleOptions: [4,6,8]
+  },
+  coherence: {
+    name: 'Cohérence cardiaque',
+    desc: 'À utiliser en routine, 3x/jour, pour faire baisser le niveau de stress général.',
+    phases: [
+      {label:'Inspire', sub:'', duration:5, exhale:false, scale:1},
+      {label:'Expire', sub:'', duration:5, exhale:true, scale:0.7},
+    ],
+    defaultCycles: 30,
+    cycleOptions: [6, 15, 30]
+  },
+  carre: {
+    name: 'Carré',
+    desc: 'Pour se recentrer vite, avant un moment tendu.',
+    phases: [
+      {label:'Inspire', sub:'', duration:4, exhale:false, scale:1},
+      {label:'Retiens', sub:'', duration:4, exhale:false, scale:null},
+      {label:'Expire', sub:'', duration:4, exhale:true, scale:0.7},
+      {label:'Retiens', sub:'', duration:4, exhale:false, scale:null},
+    ],
+    defaultCycles: 5,
+    cycleOptions: [4,5,8]
+  }
+};
+
+let currentTechnique = '478';
+let state = 'idle'; // idle | running | paused | done
+let phaseIndex = 0;
+let cycleNum = 0;
+let targetCycles = TECHNIQUES[currentTechnique].defaultCycles;
+let timerHandle = null;
+let secondsLeft = 0;
+let sessionStartTime = null;
+let soundOn = true;
+let voiceOn = true;
+let audioCtx = null;
+let frenchVoice = null;
+let availableFrenchVoices = [];
+let wakeLock = null;
+
+async function acquireWakeLock(){
+  if(!('wakeLock' in navigator)) return;
+  try{
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  }catch(e){
+    wakeLock = null;
+  }
+}
+
+function releaseWakeLock(){
+  if(wakeLock){
+    wakeLock.release().catch(() => {});
+    wakeLock = null;
+  }
+}
+
+document.addEventListener('visibilitychange', async () => {
+  if(document.visibilityState === 'visible' && state === 'running' && !wakeLock){
+    await acquireWakeLock();
+  }
+});
+
+const QUALITY_HINTS = ['enhanced', 'premium', 'natural', 'neural', 'google', 'siri'];
+
+function rankVoice(v){
+  const name = v.name.toLowerCase();
+  let score = 0;
+  QUALITY_HINTS.forEach((hint, i) => {
+    if(name.includes(hint)) score += (QUALITY_HINTS.length - i) * 10;
+  });
+  if(v.localService) score += 3; // local voices are often higher quality & lower latency
+  if(v.lang === 'fr-FR') score += 2;
+  return score;
+}
+
+function pickFrenchVoice(){
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  availableFrenchVoices = voices
+    .filter(v => v.lang && v.lang.toLowerCase().startsWith('fr'))
+    .sort((a,b) => rankVoice(b) - rankVoice(a));
+  if(availableFrenchVoices.length){
+    const saved = localStorage.getItem && null; // no persistence, session only
+    frenchVoice = availableFrenchVoices[0];
+  }
+  populateVoicePicker();
+}
+if('speechSynthesis' in window){
+  pickFrenchVoice();
+  window.speechSynthesis.onvoiceschanged = pickFrenchVoice;
+}
+
+function populateVoicePicker(){
+  const picker = document.getElementById('voicePicker');
+  if(!picker) return;
+  if(availableFrenchVoices.length <= 1){
+    picker.style.display = 'none';
+    return;
+  }
+  picker.style.display = 'inline-block';
+  picker.innerHTML = '';
+  availableFrenchVoices.forEach((v, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = v.name;
+    picker.appendChild(opt);
+  });
+  picker.value = 0;
+}
+
+function speakPhase(text){
+  if(!voiceOn || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'fr-FR';
+  if(frenchVoice) utter.voice = frenchVoice;
+  utter.rate = 0.88;
+  utter.pitch = 0.98;
+  utter.volume = 0.9;
+  window.speechSynthesis.speak(utter);
+}
+
+const orb = document.getElementById('orb');
+const orbLabel = document.getElementById('orbLabel');
+const orbSub = document.getElementById('orbSub');
+const phaseSecondsEl = document.getElementById('phaseSeconds');
+const cycleCountEl = document.getElementById('cycleCount');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const metaEl = document.getElementById('meta');
+const summaryEl = document.getElementById('summary');
+const cyclesTargetSelect = document.getElementById('cyclesTarget');
+const tabs = document.querySelectorAll('.tab');
+const soundBtn = document.getElementById('soundBtn');
+const soundIconOn = document.getElementById('soundIconOn');
+const soundIconOff = document.getElementById('soundIconOff');
+const ringIndicator = document.getElementById('ringIndicator');
+
+const RING_RADIUS = 140;
+const RING_CIRCUM = 2 * Math.PI * RING_RADIUS;
+ringIndicator.style.strokeDasharray = RING_CIRCUM;
+ringIndicator.style.strokeDashoffset = 0;
+
+function playTone(freq, duration){
+  if(!soundOn) return;
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.08);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }catch(e){}
+}
+
+function vibrate(ms){
+  if(navigator.vibrate) navigator.vibrate(ms);
+}
+
+function populateCycleOptions(){
+  const t = TECHNIQUES[currentTechnique];
+  cyclesTargetSelect.innerHTML = '';
+  t.cycleOptions.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n + ' cycles';
+    if(n === t.defaultCycles) opt.selected = true;
+    cyclesTargetSelect.appendChild(opt);
+  });
+  targetCycles = t.defaultCycles;
+}
+
+function renderMeta(){
+  const t = TECHNIQUES[currentTechnique];
+  metaEl.innerHTML = `<strong>${t.name}</strong> — ${t.desc}`;
+}
+
+function resetVisual(){
+  orb.style.transitionDuration = '0.6s';
+  orb.style.transform = 'scale(0.72)';
+  orb.classList.remove('exhale-color');
+  orbLabel.textContent = 'Prêt';
+  orbSub.textContent = '';
+  phaseSecondsEl.textContent = '';
+  cycleCountEl.textContent = '';
+  ringIndicator.style.transitionDuration = '0.3s';
+  ringIndicator.style.strokeDashoffset = 0;
+  ringIndicator.classList.remove('exhale');
+  summaryEl.textContent = '';
+}
+
+function stopTimer(){
+  clearInterval(timerHandle);
+  timerHandle = null;
+}
+
+function setPhase(idx){
+  const t = TECHNIQUES[currentTechnique];
+  const phase = t.phases[idx];
+  phaseIndex = idx;
+  secondsLeft = phase.duration;
+
+  orbLabel.textContent = phase.label;
+  orbSub.textContent = phase.sub;
+  phaseSecondsEl.textContent = secondsLeft;
+
+  if(phase.exhale){
+    orb.classList.add('exhale-color');
+    ringIndicator.classList.add('exhale');
+  } else {
+    orb.classList.remove('exhale-color');
+    if(phase.label === 'Inspire') ringIndicator.classList.remove('exhale');
+  }
+
+  // Orb scale
+  orb.style.transitionDuration = phase.duration + 's';
+  if(phase.scale !== null){
+    orb.style.transform = `scale(${phase.scale})`;
+  }
+
+  // Progress ring: fills over the phase duration
+  ringIndicator.style.transitionDuration = '0s';
+  ringIndicator.style.strokeDashoffset = RING_CIRCUM;
+  // force reflow then animate to 0 over phase duration
+  void ringIndicator.getBoundingClientRect();
+  ringIndicator.style.transitionDuration = phase.duration + 's';
+  ringIndicator.style.strokeDashoffset = 0;
+
+  // audio + haptic + voice cue on phase change
+  const freqMap = {'Inspire':523, 'Retiens':440, 'Expire':349};
+  playTone(freqMap[phase.label] || 440, 0.5);
+  vibrate(30);
+  speakPhase(phase.sub ? `${phase.label}, ${phase.sub}` : phase.label);
+}
+
+function tick(){
+  secondsLeft -= 1;
+  phaseSecondsEl.textContent = Math.max(secondsLeft, 0);
+  if(secondsLeft <= 0){
+    const t = TECHNIQUES[currentTechnique];
+    let nextIdx = phaseIndex + 1;
+    if(nextIdx >= t.phases.length){
+      nextIdx = 0;
+      cycleNum += 1;
+      cycleCountEl.textContent = `Cycle ${cycleNum} / ${targetCycles}`;
+      if(cycleNum >= targetCycles){
+        finishSession();
+        return;
+      }
+    }
+    setPhase(nextIdx);
+  }
+}
+
+function finishSession(){
+  stopTimer();
+  releaseWakeLock();
+  state = 'done';
+  orbLabel.textContent = 'Terminé';
+  orbSub.textContent = '';
+  phaseSecondsEl.textContent = '';
+  orb.style.transitionDuration = '1.2s';
+  orb.style.transform = 'scale(0.85)';
+  orb.classList.remove('exhale-color');
+  ringIndicator.style.transitionDuration = '0.6s';
+  ringIndicator.style.strokeDashoffset = 0;
+  const elapsed = Math.round((Date.now() - sessionStartTime) / 1000);
+  const mins = Math.floor(elapsed / 60);
+  const secs = elapsed % 60;
+  const timeStr = mins > 0 ? `${mins} min ${secs}s` : `${secs}s`;
+  summaryEl.textContent = `${cycleNum} cycles complétés en ${timeStr}`;
+  playTone(659, 0.8);
+  vibrate([40,60,40]);
+  speakPhase(`Terminé. ${cycleNum} cycles complétés.`);
+  startBtn.textContent = 'Recommencer';
+  startBtn.disabled = false;
+}
+
+function startSession(){
+  state = 'running';
+  cycleNum = 0;
+  sessionStartTime = Date.now();
+  summaryEl.textContent = '';
+  cycleCountEl.textContent = `Cycle 0 / ${targetCycles}`;
+  startBtn.textContent = 'Pause';
+  setPhase(0);
+  timerHandle = setInterval(tick, 1000);
+  acquireWakeLock();
+}
+
+function pauseSession(){
+  state = 'paused';
+  stopTimer();
+  releaseWakeLock();
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  orb.style.transitionDuration = '0s';
+  ringIndicator.style.transitionDuration = '0s';
+  // freeze current computed values by reapplying current transform/offset (browser keeps them since we set duration 0)
+  startBtn.textContent = 'Reprendre';
+}
+
+function resumeSession(){
+  state = 'running';
+  const t = TECHNIQUES[currentTechnique];
+  const phase = t.phases[phaseIndex];
+  // resume remaining time on orb scale + ring
+  orb.style.transitionDuration = secondsLeft + 's';
+  if(phase.scale !== null){
+    orb.style.transform = `scale(${phase.scale})`;
+  }
+  ringIndicator.style.transitionDuration = secondsLeft + 's';
+  ringIndicator.style.strokeDashoffset = 0;
+  startBtn.textContent = 'Pause';
+  timerHandle = setInterval(tick, 1000);
+  acquireWakeLock();
+}
+
+startBtn.addEventListener('click', () => {
+  if(state === 'idle' || state === 'done'){
+    startSession();
+  } else if(state === 'running'){
+    pauseSession();
+  } else if(state === 'paused'){
+    resumeSession();
+  }
+});
+
+resetBtn.addEventListener('click', () => {
+  stopTimer();
+  releaseWakeLock();
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  state = 'idle';
+  cycleNum = 0;
+  startBtn.disabled = false;
+  startBtn.textContent = 'Commencer';
+  resetVisual();
+});
+
+cyclesTargetSelect.addEventListener('change', (e) => {
+  targetCycles = parseInt(e.target.value, 10);
+});
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    stopTimer();
+    state = 'idle';
+    cycleNum = 0;
+    startBtn.disabled = false;
+    startBtn.textContent = 'Commencer';
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTechnique = tab.dataset.technique;
+    populateCycleOptions();
+    renderMeta();
+    resetVisual();
+  });
+});
+
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.classList.toggle('on', soundOn);
+  soundIconOn.style.display = soundOn ? 'block' : 'none';
+  soundIconOff.style.display = soundOn ? 'none' : 'block';
+});
+
+const voiceBtn = document.getElementById('voiceBtn');
+const voiceIconOn = document.getElementById('voiceIconOn');
+const voiceIconOff = document.getElementById('voiceIconOff');
+const voicePicker = document.getElementById('voicePicker');
+
+voicePicker.addEventListener('change', (e) => {
+  const idx = parseInt(e.target.value, 10);
+  frenchVoice = availableFrenchVoices[idx];
+  speakPhase('Bonjour');
+});
+
+voiceBtn.addEventListener('click', () => {
+  voiceOn = !voiceOn;
+  voiceBtn.classList.toggle('on', voiceOn);
+  voiceIconOn.style.display = voiceOn ? 'block' : 'none';
+  voiceIconOff.style.display = voiceOn ? 'none' : 'block';
+  if(!voiceOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+});
+
+// init
+populateCycleOptions();
+renderMeta();
+resetVisual();
+
+// PWA: register service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+</script>
+
+</body>
+</html>
